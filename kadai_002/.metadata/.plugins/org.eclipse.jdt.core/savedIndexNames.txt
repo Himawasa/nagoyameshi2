@@ -1,0 +1,2 @@
+INDEX VERSION 1.134+C:\TMP2\kadai_002\.metadata\.plugins\org.eclipse.jdt.core
+4936977.index

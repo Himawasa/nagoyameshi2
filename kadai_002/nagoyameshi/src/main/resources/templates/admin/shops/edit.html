@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+    <title>店舗情報編集</title>
+</head>
+<body>
+    <div class="nagoyameshi-wrapper">
+        <!-- ヘッダー -->
+        <div th:replace="~{fragment :: header}"></div>
+
+        <main>
+            <div class="container pt-4 pb-5 nagoyameshi-container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-6 col-lg-8 col-md-10">
+                        <h1 class="mb-4 text-center">店舗情報編集</h1>
+
+                        <form th:action="@{/admin/shops/{id}(id=${shopEditForm.getId()})}" th:object="${shopEditForm}" method="post" enctype="multipart/form-data">
+                            <input type="hidden" th:field="*{id}" />
+
+                            <div class="mb-3">
+                                <label for="name" class="form-label">店舗名</label>
+                                <input type="text" id="name" th:field="*{name}" class="form-control" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="category" class="form-label">カテゴリ</label>
+                                <select id="category" th:field="*{categoryId}" class="form-select" required>
+                                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">説明</label>
+                                <textarea id="description" th:field="*{description}" class="form-control" rows="3" required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="price" class="form-label">平均価格 (円)</label>
+                                <input type="number" id="price" th:field="*{price}" class="form-control" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="postalCode" class="form-label">郵便番号</label>
+                                <input type="text" id="postalCode" th:field="*{postalCode}" class="form-control" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="address" class="form-label">住所</label>
+                                <input type="text" id="address" th:field="*{address}" class="form-control" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phoneNumber" class="form-label">電話番号</label>
+                                <input type="text" id="phoneNumber" th:field="*{phoneNumber}" class="form-control" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="businessHours" class="form-label">営業時間</label>
+                                <input type="text" id="businessHours" th:field="*{businessHours}" class="form-control" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="regularHoliday" class="form-label">定休日</label>
+                                <input type="text" id="regularHoliday" th:field="*{regularHoliday}" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="image" class="form-label">画像</label>
+                                <input type="file" id="image" th:field="*{image}" class="form-control" />
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/admin/shops}" class="btn btn-secondary">キャンセル</a>
+                                <button type="submit" class="btn btn-primary">保存</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- フッター -->
+        <div th:replace="~{fragment :: footer}"></div>
+    </div>
+
+    <div th:replace="~{fragment :: scripts}"></div>
+</body>
+</html>
