@@ -37,7 +37,7 @@ public class Shop {
      */
     @Column(name = "category_id", nullable = false)
     private Integer categoryId;
-
+    
     /**
      * 店舗名
      * データベースの "name" 列と対応します。

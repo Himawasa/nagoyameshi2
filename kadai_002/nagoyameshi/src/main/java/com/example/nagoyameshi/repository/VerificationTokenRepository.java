@@ -11,11 +11,11 @@ import com.example.nagoyameshi.entity.VerificationToken; // VerificationTokenエ
 * Spring Data JPAにより、自動でCRUD機能が提供されます。
 */
 public interface VerificationTokenRepository extends JpaRepository<VerificationToken, Integer> {
- /**
-  * トークンに基づいてVerificationTokenを検索します。
-  *
-  * @param token トークン文字列
-  * @return 検索結果のVerificationToken
-  */
- public VerificationToken findByToken(String token);
+	/**
+	 * トークンに基づいてVerificationTokenを検索します。
+	 *
+	 * @param token トークン文字列
+	 * @return 検索結果のVerificationToken
+	 */
+	public VerificationToken findByToken(String token);
 }

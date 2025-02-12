@@ -57,3 +57,32 @@ INSERT IGNORE INTO categories (id, name) VALUES
 (3, '中華'),
 (4, 'ラーメン'),
 (5, '居酒屋');
+
+-- reviewsテーブル
+ INSERT IGNORE INTO reviews (id, shop_id, user_id, comment) VALUES (1, 1, 1, '素晴らしい滞在でした。また利用したいです。');
+ INSERT IGNORE INTO reviews (id, shop_id, user_id, comment) VALUES (2, 1, 2, '部屋が綺麗で、快適に過ごせました。');
+ INSERT IGNORE INTO reviews (id, shop_id, user_id, comment) VALUES (3, 1, 3, 'アクセスが良く、観光に最適でした。');
+ INSERT IGNORE INTO reviews (id, shop_id, user_id, comment) VALUES (4, 1, 4, 'スタッフが親切で、気持ちよく滞在できました。');
+ INSERT IGNORE INTO reviews (id, shop_id, user_id, comment) VALUES (5, 1, 5, '駅から近く、便利でした。');
+ INSERT IGNORE INTO reviews (id, shop_id, user_id, comment) VALUES (6, 1, 6, '周辺の飲食店が充実していて、楽しめました。');
+ INSERT IGNORE INTO reviews (id, shop_id, user_id, comment) VALUES (7, 1, 7, '宿泊費が手頃で、コストパフォーマンスが良かったです。');
+ INSERT IGNORE INTO reviews (id, shop_id, user_id, comment) VALUES (8, 1, 8, '静かな環境でゆっくり休めました。');
+ INSERT IGNORE INTO reviews (id, shop_id, user_id, comment) VALUES (9, 1, 9, '施設内の設備が充実していました。');
+ INSERT IGNORE INTO reviews (id, shop_id, user_id, comment) VALUES (10, 1, 10, 'Wi-Fiが快適で助かりました。');
+ INSERT IGNORE INTO reviews (id, shop_id, user_id, comment) VALUES (11, 1, 11, '清潔感があり、気持ちよく滞在できました。');
+ INSERT IGNORE INTO reviews (id, shop_id, user_id, comment) VALUES (12, 1, 12, '部屋が広く、ゆったり過ごせました。');
+
+ -- favoritesテーブル
+ INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (1, 1, 1);
+ INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (2, 2, 1);
+ INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (3, 3, 1);
+ INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (4, 4, 1);
+ INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (5, 5, 1);
+ INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (6, 6, 1);
+ INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (7, 7, 1);
+ INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (8, 8, 1);
+ INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (9, 9, 1);
+ INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (10, 10, 1);
+ INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (11, 11, 1);
+ INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (12, 12, 1);
+

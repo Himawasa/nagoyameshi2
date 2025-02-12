@@ -13,21 +13,22 @@ import com.example.nagoyameshi.entity.User; // Userエンティティの操作�
 * Spring Data JPAにより、自動でCRUD機能が提供されます。
 */
 public interface UserRepository extends JpaRepository<User, Integer> {
- /**
-  * メールアドレスでユーザーを検索します。
-  *
-  * @param email メールアドレス
-  * @return 検索結果のUser
-  */
- public User findByEmail(String email);
+	/**
+	 * メールアドレスでユーザーを検索します。
+	 *
+	 * @param email メールアドレス
+	 * @return 検索結果のUser
+	 */
+	public User findByEmail(String email);
 
- /**
-  * 名前またはフリガナが部分一致するユーザーを検索します。
-  *
-  * @param nameKeyword 名前の検索キーワード
-  * @param furiganaKeyword フリガナの検索キーワード
-  * @param pageable ページング情報
-  * @return ユーザーのページング結果
-  */
- public Page<User> findByNameLikeOrFuriganaLike(String nameKeyword, String furiganaKeyword, Pageable pageable);
+	/**
+	 * 名前またはフリガナが部分一致するユーザーを検索します。
+	 *
+	 * @param nameKeyword 名前の検索キーワード
+	 * @param furiganaKeyword フリガナの検索キーワード
+	 * @param pageable ページング情報
+	 * @return ユーザーのページング結果
+	 */
+	public Page<User> findByNameLikeOrFuriganaLike(String nameKeyword, String furiganaKeyword, Pageable pageable);
+
 }
