@@ -28,7 +28,7 @@ public class FavoriteService {
     /**
      * お気に入りを作成するメソッド。
      * 
-     * @param Shop 対象の民宿
+     * @param Shop 対象の店舗
      * @param user 対象のユーザー
      */
     @Transactional
@@ -36,7 +36,7 @@ public class FavoriteService {
         // Favoriteクラスのインスタンスを生成
         Favorite favorite = new Favorite();
 
-        // 民宿とユーザーを設定
+        // 店舗とユーザーを設定
         favorite.setShop(Shop);
         favorite.setUser(user);
 
@@ -45,9 +45,9 @@ public class FavoriteService {
     }
 
     /**
-     * 指定された民宿とユーザーが既にお気に入りに登録されているかを判定する。
+     * 指定された店舗とユーザーが既にお気に入りに登録されているかを判定する。
      * 
-     * @param Shop 対象の民宿
+     * @param Shop 対象の店舗
      * @param user 対象のユーザー
      * @return お気に入り登録されている場合はtrue、そうでない場合はfalse
      */

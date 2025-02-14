@@ -19,10 +19,12 @@ import com.example.nagoyameshi.entity.Review;
 import com.example.nagoyameshi.entity.Shop;
 import com.example.nagoyameshi.entity.User;
 import com.example.nagoyameshi.form.ReservationInputForm;
+import com.example.nagoyameshi.repository.CategoryRepository;
 import com.example.nagoyameshi.repository.FavoriteRepository;
 import com.example.nagoyameshi.repository.ReviewRepository;
 import com.example.nagoyameshi.repository.ShopRepository;
 import com.example.nagoyameshi.security.UserDetailsImpl;
+import com.example.nagoyameshi.service.CategoryService;
 import com.example.nagoyameshi.service.FavoriteService;
 import com.example.nagoyameshi.service.ReviewService;
 
@@ -37,6 +39,8 @@ public class ShopController {
 	private final FavoriteService favoriteService;
 	private final FavoriteRepository favoriteRepository;
 	private final ReviewRepository reviewRepository;
+	private final CategoryRepository categoryRepository;
+	private final CategoryService categoryService;
 
 	/**
 	 * 店舗一覧を表示するメソッド。
@@ -66,7 +70,7 @@ public class ShopController {
 		model.addAttribute("shopPage", shopPage);
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("categoryId", categoryId);
-
+		model.addAttribute("categories", categoryRepository.findAll());
 		return "shops/index";
 	}
 
@@ -112,6 +116,7 @@ public class ShopController {
 
 		// 店舗情報をモデルに追加
 		model.addAttribute("shop", shop);
+		model.addAttribute("categoryName", categoryService.getCategoryName(shop.getCategoryId()));
 		model.addAttribute("reservationInputForm", new ReservationInputForm());
 		return "shops/show";
 	}

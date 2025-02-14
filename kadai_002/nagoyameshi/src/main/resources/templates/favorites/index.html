@@ -27,7 +27,7 @@
 
 						<!-- お気に入り一覧をループ表示 -->
 						<div class="mb-3" th:each="favorite : ${favoritePage}">
-							<!-- 民宿詳細ページへのリンク -->
+							<!-- 店舗詳細ページへのリンク -->
 							<a th:href="@{/shops/{id}(id=${favorite.shop.id})}"
 								class="link-dark nagoyameshi-card-link">
 								<div class="card h-100">
@@ -43,13 +43,13 @@
 										</div>
 										<div class="col-md-8">
 											<div class="card-body">
-												<!-- 民宿名 -->
+												<!-- 店舗名 -->
 												<h3 class="card-title mb-3" th:text="${favorite.shop.name}"></h3>
 
 												<hr class="mb-3">
 
 												<p class="card-text mb-2">
-													<!-- 民宿の説明 -->
+													<!-- 店舗の説明 -->
 													<span th:text="${favorite.shop.description}"></span>
 												</p>
 

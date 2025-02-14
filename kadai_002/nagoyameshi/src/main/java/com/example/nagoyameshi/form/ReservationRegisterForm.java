@@ -26,9 +26,9 @@ public class ReservationRegisterForm {
     private Integer userId;    
         
     /**
-     * チェックイン日
-     * - 宿泊を開始する日付を保持します。
-     * - 文字列形式（例: "yyyy-mm-dd hh:mm:ss"）。
+     * 来店日時
+     * - 来店日時保持します。
+     * - 文字列形式（例: "yyyy-mm-dd hh:mm"）。
      */
     private String reservationDate;    
         

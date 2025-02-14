@@ -5,7 +5,7 @@
 	<div th:replace="~{fragment :: meta}"></div>
 	<div th:replace="~{fragment :: styles}"></div>
 
-	<title>民宿一覧</title>
+	<title>店舗一覧</title>
 </head>
 
 <body>
@@ -19,7 +19,7 @@
 					<nav class="my-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
 						<ol class="breadcrumb mb-0">
 							<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
-							<li class="breadcrumb-item active" aria-current="page">民宿一覧</li>
+							<li class="breadcrumb-item active" aria-current="page">店舗一覧</li>
 						</ol>
 					</nav>
 
@@ -27,7 +27,7 @@
 						<form method="get" th:action="@{/shops}" class="w-100 mb-3">
 							<div class="input-group">
 								<input type="text" class="form-control" name="keyword" th:value="${keyword}"
-									placeholder="民宿名・目的地">
+									placeholder="店舗名・目的地">
 								<button type="submit" class="btn text-white shadow-sm nagoyameshi-btn">検索</button>
 							</div>
 						</form>
@@ -40,12 +40,9 @@
 								<form method="get" th:action="@{/shops}" class="w-100">
 									<div class="form-group mb-3">
 										<select class="form-control form-select" name="categoryId">
-											<option value="" hidden>選択してください</option>
-											<option value="1" th:selected=" ${categoryId==1}">和食</option>
-											<option value="2" th:selected=" ${categoryId==2}">洋食</option>
-											<option value="3" th:selected=" ${categoryId==3}">中華</option>
-											<option value="4" th:selected="${categoryId==4}">ラーメン</option>
-											<option value="5" th:selected="${categoryId==5}">居酒屋</option>
+											<option value="">選択してください</option>
+											<option th:each="category : ${categories}" th:selected="${category.id == categoryId}" th:value="${category.id}"
+												th:text="${category.name}"></option>
 										</select>
 									</div>
 									<div class="form-group">
@@ -106,12 +103,12 @@
 
 						<!-- ページネーション -->
 						<div th:if="${shopPage.getTotalPages() > 1}" class="d-flex justify-content-center">
-							<nav aria-label="民宿一覧ページ">
+							<nav aria-label="店舗一覧ページ">
 								<ul class="pagination">
 									<li class="page-item">
 										<span th:if="${shopPage.isFirst()}" class="page-link disabled">前</span>
 										<a th:unless="${shopPage.isFirst()}"
-											th:href="@{/shops(page = ${shopPage.getNumber() - 1}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order})}"
+											th:href="@{/shops(page = ${shopPage.getNumber() - 1}, keyword = ${keyword}, category = ${category})}"
 											class="page-link nagoyameshi-page-link">前</a>
 									</li>
 									<li th:each="i : ${#numbers.sequence(0, shopPage.getTotalPages() - 1)}"
@@ -119,13 +116,13 @@
 										<span th:if="${i == shopPage.getNumber()}"
 											class="page-link active nagoyameshi-active" th:text="${i + 1}"></span>
 										<a th:unless="${i == shopPage.getNumber()}"
-											th:href="@{/shops(page = ${i}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order})}"
+											th:href="@{/shops(page = ${i}, keyword = ${keyword}, category = ${category})}"
 											class="page-link nagoyameshi-page-link" th:text="${i + 1}"></a>
 									</li>
 									<li class="page-item">
 										<span th:if="${shopPage.isLast()}" class="page-link disabled">次</span>
 										<a th:unless="${shopPage.isLast()}"
-											th:href="@{/shops(page = ${shopPage.getNumber() + 1}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order})}"
+											th:href="@{/shops(page = ${shopPage.getNumber() + 1}, keyword = ${keyword}, category = ${category})}"
 											class="page-link nagoyameshi-page-link">次</a>
 									</li>
 								</ul>

@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated; // バリデーシ�
 import org.springframework.web.bind.annotation.GetMapping; // GETリクエスト用のマッピング
 import org.springframework.web.bind.annotation.ModelAttribute; // モデル属性を取得
 import org.springframework.web.bind.annotation.PathVariable; // URLのパス変数を取得
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes; // リダイレクト時にメッセージを渡す
 
 import com.example.nagoyameshi.entity.Reservation;
@@ -28,6 +29,7 @@ import com.example.nagoyameshi.repository.ShopRepository;
 import com.example.nagoyameshi.security.UserDetailsImpl;
 import com.example.nagoyameshi.service.ReservationService;
 import com.example.nagoyameshi.service.StripeService;
+import com.example.nagoyameshi.util.NagoyameshiUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -84,7 +86,8 @@ public class ReservationController {
 		User user = userDetailsImpl.getUser(); // 認証済みユーザーを取得
 
 		// 来店日時を取得
-		LocalDateTime reservationDate = LocalDateTime.parse(reservationInputForm.getCommingDate());
+		LocalDateTime reservationDate = LocalDateTime.parse(reservationInputForm.getCommingDate(),
+				NagoyameshiUtils.COMMING_DATE_TIME_FORMATTER);
 
 		// 宿泊料金を計算
 		Integer price = shop.getPrice();
@@ -92,9 +95,11 @@ public class ReservationController {
 
 		// 予約登録フォームを作成
 		ReservationRegisterForm reservationRegisterForm = new ReservationRegisterForm(shop.getId(), user.getId(),
-				reservationDate.toString(), reservationInputForm.getNumberOfPeople(), amount);
+				reservationDate.format(NagoyameshiUtils.COMMING_DATE_TIME_FORMATTER),
+				reservationInputForm.getNumberOfPeople(), amount);
 
 		// Stripeのセッションを作成
+		// NOTE 決済処理はモックのためしない
 		String sessionId = stripeService.createStripeSession(shop.getName(), reservationRegisterForm,
 				httpServletRequest);
 
@@ -104,5 +109,30 @@ public class ReservationController {
 		model.addAttribute("sessionId", sessionId);
 
 		return "reservations/confirm"; // 予約確認画面を表示
+	}
+
+	/**
+	 * 予約をキャンセル
+	 * @param id
+	 * @return
+	 */
+	@PostMapping("/reservation/cancel/{id}")
+	public String cancel(@PathVariable(name = "id") Integer id) {
+		var reservation = reservationRepository.findById(id).orElseGet(null);
+
+		// ありえないエラー
+		if (reservation == null) {
+			return "redirect:/reservations?error";
+		}
+		// Stripeへ支払いキャンセルを実施する
+		try {
+			stripeService.cancelReservation(reservation.getPaymentId());
+		} catch (Exception e) {
+			return "redirect:/reservations?cancelError";
+		}
+		// DBから予約を削除する
+		reservationRepository.deleteById(id);
+		
+		return "redirect:/reservations?cancel";
 	}
 }

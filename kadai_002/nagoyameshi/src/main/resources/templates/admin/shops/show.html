@@ -1,75 +1,78 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <div th:replace="~{fragment :: meta}"></div>
-    <div th:replace="~{fragment :: styles}"></div>
-    <title>店舗詳細</title>
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>店舗詳細</title>
 </head>
+
 <body>
-    <div class="nagoyameshi-wrapper">
-        <!-- ヘッダー -->
-        <div th:replace="~{fragment :: header}"></div>
+	<div class="nagoyameshi-wrapper">
+		<!-- ヘッダー -->
+		<div th:replace="~{fragment :: header}"></div>
 
-        <main>
-            <div class="container pt-4 pb-5 nagoyameshi-container">
-                <h1 class="mb-4 text-center">店舗詳細</h1>
+		<main>
+			<div class="container pt-4 pb-5 nagoyameshi-container">
+				<h1 class="mb-4 text-center">店舗詳細</h1>
 
-                <div class="row justify-content-center">
-                    <div class="col-xl-6 col-lg-8 col-md-10">
-                        <div class="card">
-                            <div class="card-header text-center">
-                                <h2 th:text="${shop.name}"></h2>
-                            </div>
-                            <div class="card-body">
-<!--                                <div class="mb-3">-->
-<!--                                    <strong>カテゴリ:</strong>-->
-<!--                                    <span th:text="${shop.categoryName}"></span>-->
-<!--                                </div>-->
-                                <div class="mb-3">
-                                    <strong>説明:</strong>
-                                    <p th:text="${shop.description}"></p>
-                                </div>
-                                <div class="mb-3">
-                                    <strong>平均価格:</strong>
-                                    <span th:text="${shop.price} + '円'"></span>
-                                </div>
-                                <div class="mb-3">
-                                    <strong>郵便番号:</strong>
-                                    <span th:text="${shop.postalCode}"></span>
-                                </div>
-                                <div class="mb-3">
-                                    <strong>住所:</strong>
-                                    <span th:text="${shop.address}"></span>
-                                </div>
-                                <div class="mb-3">
-                                    <strong>電話番号:</strong>
-                                    <span th:text="${shop.phoneNumber}"></span>
-                                </div>
-                                <div class="mb-3">
-                                    <strong>営業時間:</strong>
-                                    <span th:text="${shop.businessHours}"></span>
-                                </div>
-                                <div class="mb-3">
-                                    <strong>定休日:</strong>
-                                    <span th:text="${shop.regularHoliday}"></span>
-                                </div>
-                                <div class="text-center">
-                                    <img th:src="@{'/storage/' + ${shop.image}}" alt="店舗画像" class="img-fluid" />
-                                </div>
-                            </div>
-                            <div class="card-footer text-center">
-                                <a th:href="@{/admin/shops}" class="btn btn-secondary">一覧に戻る</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+				<div class="row justify-content-center">
+					<div class="col-xl-6 col-lg-8 col-md-10">
+						<div class="card">
+							<div class="card-header text-center">
+								<h2 th:text="${shop.name}"></h2>
+							</div>
+							<div class="card-body">
+								<div class="mb-3">
+									<strong>カテゴリ:</strong>
+									<span th:text="${categoryName}"></span>
+								</div>
+								<div class="mb-3">
+									<strong>説明:</strong>
+									<p th:text="${shop.description}"></p>
+								</div>
+								<div class="mb-3">
+									<strong>平均価格:</strong>
+									<span th:text="${shop.price} + '円'"></span>
+								</div>
+								<div class="mb-3">
+									<strong>郵便番号:</strong>
+									<span th:text="${shop.postalCode}"></span>
+								</div>
+								<div class="mb-3">
+									<strong>住所:</strong>
+									<span th:text="${shop.address}"></span>
+								</div>
+								<div class="mb-3">
+									<strong>電話番号:</strong>
+									<span th:text="${shop.phoneNumber}"></span>
+								</div>
+								<div class="mb-3">
+									<strong>営業時間:</strong>
+									<span th:text="${shop.businessHours}"></span>
+								</div>
+								<div class="mb-3">
+									<strong>定休日:</strong>
+									<span th:text="${shop.regularHoliday}"></span>
+								</div>
+								<div class="text-center">
+									<img th:src="@{'/storage/' + ${shop.image}}" alt="店舗画像" class="img-fluid" />
+								</div>
+							</div>
+							<div class="card-footer text-center">
+								<a th:href="@{/admin/shops}" class="btn btn-secondary">一覧に戻る</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
 
-        <!-- フッター -->
-        <div th:replace="~{fragment :: footer}"></div>
-    </div>
+		<!-- フッター -->
+		<div th:replace="~{fragment :: footer}"></div>
+	</div>
 
-    <div th:replace="~{fragment :: scripts}"></div>
+	<div th:replace="~{fragment :: scripts}"></div>
 </body>
+
 </html>

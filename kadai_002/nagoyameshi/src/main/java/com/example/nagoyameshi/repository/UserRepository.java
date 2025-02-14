@@ -22,13 +22,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	public User findByEmail(String email);
 
 	/**
-	 * 名前またはフリガナが部分一致するユーザーを検索します。
+	 * メールアドレスが部分一致するユーザーを検索します。
 	 *
-	 * @param nameKeyword 名前の検索キーワード
-	 * @param furiganaKeyword フリガナの検索キーワード
+	 * @param emailKeyword メールアドレスの検索キーワード
 	 * @param pageable ページング情報
 	 * @return ユーザーのページング結果
 	 */
-	public Page<User> findByNameLikeOrFuriganaLike(String nameKeyword, String furiganaKeyword, Pageable pageable);
+	public Page<User> findByEmailLike(String emailKeyword, Pageable pageable);
 
 }

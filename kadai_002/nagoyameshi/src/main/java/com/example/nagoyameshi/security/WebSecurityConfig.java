@@ -39,12 +39,9 @@ public class WebSecurityConfig {
 								"/signup/**",
 								"/shops", // 店舗一覧
 								"/shops/{id}", // 店舗詳細
-								"/shops/{id}/reviews",  // レビュー一覧ページへのアクセスを許可
+								"/shops/{id}/reviews", // レビュー一覧ページへのアクセスを許可
 								"/login",
-								"/admin/**", // 管理者ページ（現在は誰でもアクセス可能）
 								"/stripe/webhook", // ストライプのWebHook
-								"/admin/shops/new", // 新規登録ページへのアクセスを許可
-								"/admin/shops", // 一覧ページも許可
 								"/resetPassword", // パスワードリセット画面
 								"/reset" // リセットメール送信API
 						).permitAll()
@@ -52,7 +49,12 @@ public class WebSecurityConfig {
 						.requestMatchers(
 								"/shops/{id}/reviews", // 店舗のレビュー投稿
 								"/shops/{id}/reserve" // 予約機能
-						).hasRole("PREMIUM")
+						).hasRole("GENERAL")
+						// 管理者のみがアクセスできる機能
+						.requestMatchers(
+								"/admin",
+								"/admin/**")
+						.hasRole("ADMIN")
 						// その他は全て認証が必要
 						.anyRequest().authenticated())
 				// ログイン設定

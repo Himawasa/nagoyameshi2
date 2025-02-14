@@ -75,8 +75,7 @@
 									</div>
 									<div class="row pb-2 mb-2 border-bottom">
 										<div class="col-4"><span class="fw-bold">カテゴリー</span></div>
-										<div class="col"><span
-												th:text="${T(com.example.nagoyameshi.enums.Category).getCategoryName(shop.getCategoryId())}"></span>
+										<div class="col"><span th:text="${categoryName}"></span>
 										</div>
 									</div>
 									<div class="row pb-2 mb-2 border-bottom">
@@ -128,10 +127,8 @@
 													<label for="commingDate"
 														class="col-form-label text-md-left fw-bold">来店日時</label>
 													<div th:if="${#fields.hasErrors('commingDate')}"
-														class="text-danger small mb-2"
-														th:errors="*{commingDate}"></div>
-													<input type="text" class="form-control"
-														th:field="*{commingDate}">
+														class="text-danger small mb-2" th:errors="*{commingDate}"></div>
+													<input type="text" class="form-control" th:field="*{commingDate}">
 												</div>
 												<div class="form-group mb-4">
 													<label for="numberOfPeople"

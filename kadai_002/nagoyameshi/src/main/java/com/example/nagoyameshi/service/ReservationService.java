@@ -12,6 +12,7 @@ import com.example.nagoyameshi.entity.User;
 import com.example.nagoyameshi.repository.ReservationRepository;
 import com.example.nagoyameshi.repository.ShopRepository;
 import com.example.nagoyameshi.repository.UserRepository;
+import com.example.nagoyameshi.util.NagoyameshiUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,21 +36,24 @@ public class ReservationService {
 		Reservation reservation = new Reservation(); // 新しい予約エンティティを作成
 
 		// 支払い情報から店舗IDとユーザーIDを取得
-		Integer houseId = Integer.valueOf(paymentIntentObject.get("houseId"));
+		Integer shopId = Integer.valueOf(paymentIntentObject.get("shopId"));
 		Integer userId = Integer.valueOf(paymentIntentObject.get("userId"));
 
 		// 店舗情報とユーザー情報をリポジトリから取得
-		Shop shop = shopRepository.getReferenceById(houseId);
+		Shop shop = shopRepository.getReferenceById(shopId);
 		User user = userRepository.getReferenceById(userId);
-
-		// 支払い情報から来店日、来店人数、料金を取得
-		LocalDateTime reservationDate = LocalDateTime.parse(paymentIntentObject.get("reservationDate"));
+		
+		// 支払い情報から来店日、来店人数、料金、支払いIDを取得
+		LocalDateTime reservationDate = LocalDateTime.parse(paymentIntentObject.get("reservationDate"),
+				NagoyameshiUtils.COMMING_DATE_TIME_FORMATTER);
 		Integer numberOfPeople = Integer.valueOf(paymentIntentObject.get("numberOfPeople"));
 		Integer amount = Integer.valueOf(paymentIntentObject.get("amount"));
-
+		String paymentId = paymentIntentObject.get("paymentId");
+		
 		// 取得した情報を予約エンティティに設定
 		reservation.setShop(shop);
 		reservation.setUser(user);
+		reservation.setPaymentId(paymentId);
 		reservation.setNumberOfPeople(numberOfPeople);
 		reservation.setReservationDate(reservationDate);
 		reservation.setAmount(amount);
@@ -59,7 +63,7 @@ public class ReservationService {
 	}
 
 	/**
-	 * 宿泊料金を計算するメソッド。
+	 * 料金を計算するメソッド。
 	 * 
 	 * @param numberOfCount 来店人数
 	 * @param price 金額

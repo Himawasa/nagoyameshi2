@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>カテゴリ情報編集</title>
+</head>
+
+<body>
+	<div class="nagoyameshi-wrapper">
+		<!-- ヘッダー -->
+		<div th:replace="~{fragment :: header}"></div>
+
+		<main>
+			<div class="container pt-4 pb-5 nagoyameshi-container">
+				<div class="row justify-content-center">
+					<div class="col-xl-6 col-lg-8 col-md-10">
+						<h1 class="mb-4 text-center">カテゴリ情報編集</h1>
+
+						<form th:action="@{/admin/category/{id}(id=${categoryEditForm.getId()})}"
+							th:object="${categoryEditForm}" method="post" enctype="multipart/form-data">
+							<input type="hidden" th:field="*{id}" />
+
+							<div class="mb-3">
+								<label for="name" class="form-label">カテゴリ名</label>
+								<input type="text" id="name" th:field="*{name}" class="form-control" required />
+							</div>
+
+							<div class="d-flex justify-content-between">
+								<a th:href="@{/admin/category}" class="btn btn-secondary">キャンセル</a>
+								<button type="submit" class="btn btn-primary">保存</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<!-- フッター -->
+		<div th:replace="~{fragment :: footer}"></div>
+	</div>
+
+	<div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>

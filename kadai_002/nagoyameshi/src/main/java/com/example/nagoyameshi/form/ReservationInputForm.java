@@ -16,11 +16,11 @@ public class ReservationInputForm {
 
 	/**
 	 * 来店日
-	 * フォーマット: "yyyy-MM-dd から yyyy-MM-dd"
+	 * フォーマット: "yyyy-MM-dd hh:mm"
 	 * - フォームでは1つの入力項目で指定される。
 	 * - 空白やnullは許容されない。
 	 */
-	@NotBlank(message = "来店日を選択してください。")
+	@NotBlank(message = "来店日時を選択してください。")
 	private String commingDate;
 
 	/**

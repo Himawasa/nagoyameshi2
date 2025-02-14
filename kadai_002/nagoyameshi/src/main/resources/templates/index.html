@@ -68,6 +68,22 @@
 						</a>
 					</div>
 				</div>
+
+				<div class="row justify-content-center">
+					<div class="col-xl-5 col-lg-6 col-md-8">
+						<h2 class="text-center mb-3">カテゴリから探す</h2>
+						<form method="get" th:action="@{/shops}" id="categoryForm">
+							<div class="d-flex justify-content-between">
+								<th:block th:each="category: ${categories}">
+									<button type="button" class="btn text-white shadow-sm nagoyameshi-btn"
+										th:data-id="${category.id}" th:text="${category.name}"
+										onclick="setCategoryIdAndSubmit(this)">
+								</th:block>
+								<input type="hidden" id="categoryId" name="categoryId" value="">
+							</div>
+						</form>
+					</div>
+				</div>
 			</div>
 		</main>
 
@@ -77,5 +93,14 @@
 
 	<div th:replace="~{fragment :: scripts}"></div>
 </body>
+<script>
+	function setCategoryIdAndSubmit(button) {
+		var categoryId = button.getAttribute('data-id');
+		document.getElementById('categoryId').value = categoryId;
+		// フォームを取得してサブミット
+		var form = document.getElementById('categoryForm');
+		form.submit();
+	}
+</script>
 
 </html>

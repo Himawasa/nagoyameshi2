@@ -1,3 +1,13 @@
+-- お気に入りテーブル
+CREATE TABLE IF NOT EXISTS favorites (
+  id int auto_increment NOT NULL
+  , shop_id int NOT NULL
+  , user_id int NOT NULL
+  , created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL
+  , updated_at datetime on update CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+  , CONSTRAINT favorites_PKC PRIMARY KEY (id)
+);
+
 -- 役割（ロール）テーブル
 CREATE TABLE IF NOT EXISTS roles (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -33,7 +43,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- 店舗情報テーブル
 CREATE TABLE IF NOT EXISTS shops (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    category_id INT NOT NULL,
+    category_id INT,
     name VARCHAR(50) NOT NULL,
     image VARCHAR(255),
     description VARCHAR(255) NOT NULL,
@@ -45,7 +55,7 @@ CREATE TABLE IF NOT EXISTS shops (
     regular_holiday VARCHAR(50),
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- 予約管理テーブル
@@ -53,8 +63,9 @@ CREATE TABLE IF NOT EXISTS reservations (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     shop_id INT NOT NULL,
+    payment_id VARCHAR(255) NOT NULL,
     reservation_date DATETIME NOT NULL,
-    status ENUM('pending', 'confirmed', 'canceled') NOT NULL DEFAULT 'pending', -- 予約ステータス
+    amount int NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -66,7 +77,6 @@ CREATE TABLE IF NOT EXISTS reviews (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     shop_id INT NOT NULL,
-    rating INT CHECK (rating BETWEEN 1 AND 5), -- 1~5の評価
     comment TEXT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -82,4 +92,14 @@ CREATE TABLE IF NOT EXISTS payment_methods (
     expiry_date VARCHAR(5) NOT NULL, -- MM/YY 形式
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- verification_tokens
+CREATE TABLE IF NOT EXISTS verification_tokens (
+  id int auto_increment NOT NULL
+  , user_id int NOT NULL
+  , token varchar(255) NOT NULL
+  , created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL
+  , updated_at datetime on update CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+  , CONSTRAINT verification_tokens_PKC PRIMARY KEY (id)
 );

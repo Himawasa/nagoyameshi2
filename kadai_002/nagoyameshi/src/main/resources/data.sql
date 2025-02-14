@@ -85,4 +85,3 @@ INSERT IGNORE INTO categories (id, name) VALUES
  INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (10, 10, 1);
  INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (11, 11, 1);
  INSERT IGNORE INTO favorites (id, shop_id, user_id) VALUES (12, 12, 1);
-
