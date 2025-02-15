@@ -43,13 +43,15 @@ public class WebSecurityConfig {
 								"/login",
 								"/stripe/webhook", // ストライプのWebHook
 								"/resetPassword", // パスワードリセット画面
-								"/reset" // リセットメール送信API
+								"/reset", // リセットメール送信API
+								"/user", // マイページ以下
+								"/user/**"
 						).permitAll()
 						// 有料会員のみがアクセスできる機能
 						.requestMatchers(
 								"/shops/{id}/reviews", // 店舗のレビュー投稿
 								"/shops/{id}/reserve" // 予約機能
-						).hasRole("GENERAL")
+						).hasRole("MEMBER")
 						// 管理者のみがアクセスできる機能
 						.requestMatchers(
 								"/admin",

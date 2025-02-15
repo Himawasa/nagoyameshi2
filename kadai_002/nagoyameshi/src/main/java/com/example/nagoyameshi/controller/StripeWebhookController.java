@@ -66,4 +66,5 @@ public class StripeWebhookController {
 		// 処理が成功した場合、200 OK を返す
 		return new ResponseEntity<>("Success", HttpStatus.OK);
 	}
+	
 }

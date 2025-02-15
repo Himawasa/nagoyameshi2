@@ -1,5 +1,8 @@
 package com.example.nagoyameshi.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal; // ログインユーザー情報を取得するアノテーション
 import org.springframework.stereotype.Controller; // Spring MVCコントローラを示すアノテーション
 import org.springframework.ui.Model; // ビューにデータを渡すためのオブジェクト
@@ -8,15 +11,21 @@ import org.springframework.validation.FieldError; // フィールドエラーを
 import org.springframework.validation.annotation.Validated; // バリデーションを有効にするアノテーション
 import org.springframework.web.bind.annotation.GetMapping; // HTTP GETリクエストを処理するアノテーション
 import org.springframework.web.bind.annotation.ModelAttribute; // フォームデータをオブジェクトにバインドするアノテーション
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping; // HTTP POSTリクエストを処理するアノテーション
 import org.springframework.web.bind.annotation.RequestMapping; // コントローラの共通URLを指定するアノテーション
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes; // リダイレクト時にデータを渡すためのオブジェクト
 
 import com.example.nagoyameshi.entity.User; // ユーザーエンティティ
 import com.example.nagoyameshi.form.UserEditForm; // ユーザー編集フォーム
 import com.example.nagoyameshi.repository.UserRepository; // ユーザーリポジトリ
 import com.example.nagoyameshi.security.UserDetailsImpl; // ログインユーザー詳細情報
+import com.example.nagoyameshi.service.StripeService;
 import com.example.nagoyameshi.service.UserService; // ユーザーサービス
+import com.stripe.exception.StripeException;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * UserControllerクラス
@@ -26,21 +35,12 @@ import com.example.nagoyameshi.service.UserService; // ユーザーサービス
  */
 @Controller
 @RequestMapping("/user") // "/user" URLに対応
+@RequiredArgsConstructor
 public class UserController {
 
 	private final UserRepository userRepository; // ユーザー情報を操作するリポジトリ
 	private final UserService userService; // ユーザー関連のビジネスロジックを扱うサービス
-
-	/**
-	 * コンストラクタで依存オブジェクトを注入します。
-	 * 
-	 * @param userRepository ユーザーリポジトリ
-	 * @param userService ユーザーサービス
-	 */
-	public UserController(UserRepository userRepository, UserService userService) {
-		this.userRepository = userRepository;
-		this.userService = userService;
-	}
+	private final StripeService stripeService;
 
 	/**
 	 * ユーザー詳細ページを表示します。
@@ -117,5 +117,30 @@ public class UserController {
 		redirectAttributes.addFlashAttribute("successMessage", "会員情報を編集しました。");
 
 		return "redirect:/user"; // ユーザー詳細ページにリダイレクト
+	}
+
+	/**
+	 * 定期購読用のSessionを作成しidを返却する
+	 * @param id
+	 * @return
+	 */
+	@ResponseBody
+	@PostMapping("/{userId}/subscribe")
+	public ResponseEntity<String> subscribeSession(@PathVariable("userId") Integer id, HttpServletRequest httpRequest) {
+		String sessionId = stripeService.createStripeSubscribeSession(id, httpRequest);
+		return ResponseEntity.ok(sessionId);
+	}
+
+	/**
+	 * 定期購読を解除する
+	 * @param id
+	 * @param httpRequest
+	 * @return
+	 * @throws StripeException 
+	 */
+	@PostMapping("/{userId}/unSubscribe")
+	public String unSubscribe(@PathVariable("userId") Integer id) throws StripeException {
+		stripeService.unSubscribe(id);
+		return "redirect:/?unSubscribe";
 	}
 }

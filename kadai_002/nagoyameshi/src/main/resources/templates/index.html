@@ -23,7 +23,12 @@
 				<div th:if="${param.loggedOut}" class="alert alert-info">
 					ログアウトしました。
 				</div>
-
+				<div th:if="${param.subscribe}" class="alert alert-info">
+					有料会員にアップグレードしました。
+				</div>
+				<div th:if="${param.unSubscribe}" class="alert alert-info">
+					有料会員を解約しました。
+				</div>
 				<div th:if="${successMessage}" class="alert alert-info">
 					<span th:text="${successMessage}"></span>
 				</div>

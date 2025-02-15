@@ -8,15 +8,22 @@ import jakarta.servlet.http.HttpServletRequest; // HTTP リクエスト情報を
 
 import org.springframework.beans.factory.annotation.Value; // application.properties から値を取得するためのアノテーション
 import org.springframework.stereotype.Service; // サービスクラスとしてスプリングに認識させるためのアノテーション
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.nagoyameshi.entity.User;
 import com.example.nagoyameshi.form.ReservationRegisterForm;
+import com.example.nagoyameshi.repository.RoleRepository;
+import com.example.nagoyameshi.repository.UserRepository;
+import com.example.nagoyameshi.util.NagoyameshiUtils;
 import com.stripe.Stripe; // Stripe API を利用するための基礎クラス
 import com.stripe.exception.StripeException; // Stripe API 呼び出し時の例外を処理するためのクラス
 import com.stripe.model.Event; // Stripe イベント（Webhook データなど）を表すクラス
 import com.stripe.model.Refund;
 import com.stripe.model.StripeObject; // Stripe API が返す基本的なオブジェクトを表すクラス
+import com.stripe.model.Subscription;
 import com.stripe.model.checkout.Session; // Stripe の Checkout セッションを表すクラス
 import com.stripe.param.RefundCreateParams;
+import com.stripe.param.SubscriptionCancelParams;
 import com.stripe.param.checkout.SessionCreateParams; // Checkout セッション作成時のパラメータを設定するクラス
 import com.stripe.param.checkout.SessionRetrieveParams; // Checkout セッション情報を取得するためのパラメータクラス
 
@@ -34,8 +41,13 @@ public class StripeService {
 	// application.properties ファイルから Stripe API キーを取得
 	@Value("${stripe.api-key}")
 	private String stripeApiKey;
+	@Value("${stripe.subscribe.price-id}")
+	private String priceId;
 	// ReservationService を使用して予約情報を保存するための依存性
 	private final ReservationService reservationService;
+	private final UserService userService;
+	private final UserRepository userRepository;
+	private final RoleRepository roleRepository;
 
 	/**
 	 * Stripe の Checkout セッションを作成し、そのセッション ID を返します。
@@ -94,6 +106,84 @@ public class StripeService {
 	}
 
 	/**
+	 * Stripe の Sbscribe Checkout セッションを作成し、そのセッション ID を返します。
+	 *
+	 * @param userId ユーザーID
+	 * @param httpServletRequest HTTP リクエスト情報（成功時やキャンセル時の URL を作成するために使用）
+	 * @return 作成された Checkout セッションの ID
+	 */
+	public String createStripeSubscribeSession(Integer userId, HttpServletRequest httpServletRequest) {
+		// Stripe API キーを設定（初期化）
+		Stripe.apiKey = stripeApiKey;
+
+		// 現在のリクエスト URL を取得
+		String requestUrl = new String(httpServletRequest.getRequestURL());
+		String successUrl = removeUserPath(requestUrl);
+		// セッション作成
+		SessionCreateParams params = SessionCreateParams.builder()
+				.setSuccessUrl(successUrl + "/?subscribe") // 成功時のリダイレクト URL
+				.setCancelUrl(requestUrl) // キャンセル時のリダイレクト URL
+				.addLineItem(
+						SessionCreateParams.LineItem.builder()
+								.setQuantity(1L)
+								.setPrice(priceId) // あなたが作成した価格ID
+								.build())
+				.setMode(SessionCreateParams.Mode.SUBSCRIPTION)
+				.putMetadata("userId", NagoyameshiUtils.getCurrentUserId().toString())
+				.build();
+
+		try {
+			Session session = Session.create(params);
+			System.out.println("Session ID: " + session.getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			// セッションを作成し、セッション ID を返却
+			Session session = Session.create(params);
+			return session.getId();
+		} catch (StripeException e) {
+			e.printStackTrace(); // エラーが発生した場合はスタックトレースを出力
+			return ""; // 空の文字列を返す
+		}
+	}
+
+	private String removeUserPath(String url) {
+		// "/user"以降を削除
+		int index = url.indexOf("/user");
+		if (index != -1) {
+			return url.substring(0, index);
+		}
+		return url; // "/user"が見つからない場合は元のURLを返す
+	}
+
+	/**
+	 * 定期購読を解除する
+	 * @param userId
+	 * @throws StripeException 
+	 */
+	@Transactional
+	public void unSubscribe(Integer userId) throws StripeException {
+		Stripe.apiKey = stripeApiKey;
+
+		var opUser = userRepository.findById(userId);
+		if (!opUser.isPresent()) {
+			return;
+		}
+		User user = opUser.get();
+
+		Subscription resource = Subscription.retrieve(user.getSubscriptionId());
+		SubscriptionCancelParams params = SubscriptionCancelParams.builder().build();
+		resource.cancel(params);
+
+		user.setSubscriptionId(null);
+		user.setRole(roleRepository.findByName("ROLE_GENERAL"));
+
+		userRepository.save(user);
+	}
+
+	/**
 	 * Webhook 経由で受信した Stripe の Checkout セッションイベントを処理し、予約を作成します。
 	 *
 	 * @param event Stripe イベントオブジェクト
@@ -108,16 +198,25 @@ public class StripeService {
 			SessionRetrieveParams params = SessionRetrieveParams.builder()
 					.addExpand("payment_intent") // 支払い情報を展開
 					.build();
-
 			try {
 				// Stripe API から最新のセッション情報を取得
 				session = Session.retrieve(session.getId(), params, null);
-				// 支払い情報から予約のメタデータを取得
-				var paymentObject = session.getPaymentIntentObject();
-				Map<String, String> paymentIntentObject = paymentObject.getMetadata();
-				paymentIntentObject.put("paymentId", paymentObject.getId());
-				// ReservationService を使用して予約を作成
-				reservationService.create(paymentIntentObject);
+				switch (session.getMode()) {
+				case "payment" -> {
+					// 予約成立の処理
+					// 支払い情報から予約のメタデータを取得
+					var paymentObject = session.getPaymentIntentObject();
+					Map<String, String> paymentIntentObject = paymentObject.getMetadata();
+					paymentIntentObject.put("paymentId", paymentObject.getId());
+					// ReservationService を使用して予約を作成
+					reservationService.create(paymentIntentObject);
+				}
+				// 有料会員登録はユーザーのRoleを変更
+				case "subscription" -> userService.upgradeSubscribeAccount(session);
+				default -> {
+				}
+				}
+
 			} catch (StripeException e) {
 				e.printStackTrace(); // エラーが発生した場合はスタックトレースを出力
 			}
