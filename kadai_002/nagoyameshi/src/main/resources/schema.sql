@@ -65,7 +65,8 @@ CREATE TABLE IF NOT EXISTS reservations (
     shop_id INT NOT NULL,
     payment_id VARCHAR(255) NOT NULL,
     reservation_date DATETIME NOT NULL,
-    amount int NOT NULL,
+    number_of_people INT NOT NULL DEFAULT 1, -- 追加: 来店人数カラム
+    amount INT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
