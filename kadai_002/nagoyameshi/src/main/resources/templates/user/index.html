@@ -97,6 +97,79 @@
 									<span th:text="${user.getEmail()}"></span>
 								</div>
 							</div>
+
+							<div class="row pb-2 mb-2 border-bottom">
+								<div class="col-4">
+									<span class="fw-bold">プラン情報</span>
+								</div>
+
+								<div class="col">
+									<span sec:authorize="hasRole('ROLE_GENERAL')">無料会員</span>
+									<button type="button" sec:authorize="hasRole('ROLE_GENERAL')"
+										class="btn btn-sm btn-warning" data-bs-toggle="modal" style="float:right;"
+										th:data-bs-target="${'#subscribeModal-' + user.getId()}">有料会員登録</button>
+									<!--講読モーダル -->
+									<div sec:authorize="hasRole('ROLE_GENERAL')" class="modal fade"
+										th:id="'subscribeModal-' + ${user.getId()}" tabindex="-1"
+										aria-labelledby="subscribeLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title" id="subscribeLabel">
+														有料会員登録</h5>
+													<button type="button" class="btn-close" data-bs-dismiss="modal"
+														aria-label="Close"></button>
+												</div>
+												<div class="modal-body">
+													月額300円で有料会員登録をしますか？
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-secondary"
+														data-bs-dismiss="modal">キャンセル</button>
+													<input type="hidden" name="userId" th:value="${user.getId()}" />
+													<button type="submit" class="btn btn-danger"
+														id="subscribe">登録する</button>
+													<form id="subscribeForm"
+														th:action="@{/user/{userId}/subscribe(userId=${user.getId()})}"
+														method="post" />
+												</div>
+											</div>
+										</div>
+									</div>
+									<span sec:authorize="hasRole('ROLE_MEMBER')">有料会員</span> <button type="button"
+										sec:authorize="hasRole('ROLE_MEMBER')" class="btn btn-sm btn-danger"
+										data-bs-toggle="modal" style="float:right;"
+										th:data-bs-target="${'#unSubscribeModal-' + user.getId()}">有料プラン解約</button>
+									<!--講読モーダル -->
+									<div sec:authorize="hasRole('ROLE_MEMBER')" class="modal fade"
+										th:id="'unSubscribeModal-' + ${user.getId()}" tabindex="-1"
+										aria-labelledby="unSubscribeLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title" id="unSubscribeLabel">
+														有料プラン解約</h5>
+													<button type="button" class="btn-close" data-bs-dismiss="modal"
+														aria-label="Close"></button>
+												</div>
+												<div class="modal-body">
+													本当に定期購読を解約しますか？
+												</div>
+												<div class="modal-footer">
+													<form id="unSubscribeForm" th:action="@{/user/{userId}/unSubscribe(userId=${user.getId()})}" method="post">
+													<button type="button" class="btn btn-secondary"
+														data-bs-dismiss="modal">キャンセル</button>
+													<input type="hidden" name="userId" th:value="${user.getId()}" />
+													<button type="submit" class="btn btn-danger"
+														id="unSubscribe">解約する</button>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+									<span sec:authorize=" hasRole('ROLE_ADMIN')">管理者</span>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -109,5 +182,38 @@
 
 	<div th:replace="~{fragment :: scripts}"></div>
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://js.stripe.com/v3"></script>
+<script th:src="@{/js/stripe.js}"></script>
+<script>
+	$(document).ready(function () {
+		// 登録するボタンがクリックされたときの処理
+		$('#subscribe').click(function (event) {
+			event.preventDefault(); // フォームのデフォルトのサブミットを防ぐ
+			const csrfToken = document.querySelector('input[name="_csrf"]').value;
+			var userId = $('input[name="userId"]').val(); // userIdを取得
+			var form = $('#subscribeForm')[0]
+			$.ajax({
+				//url: '/user/' + userId + '/subscribe', // URLを指定
+				url: form.action, // URLを指定
+				type: 'POST', // リクエストの種類
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRF-TOKEN': csrfToken // CSRFトークンをヘッダーに追加
+				},
+				success: function (response) {
+					stripe.redirectToCheckout({
+						sessionId: response
+					})
+				},
+				error: function (xhr, status, error) {
+					// エラーが発生した場合の処理
+					console.error('エラー:', error);
+					alert('有料会員登録に失敗しました。');
+				}
+			});
+		});
+	});
+</script>
 
 </html>

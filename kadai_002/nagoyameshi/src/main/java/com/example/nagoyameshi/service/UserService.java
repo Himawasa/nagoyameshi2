@@ -1,5 +1,6 @@
 package com.example.nagoyameshi.service;
 
+import org.apache.commons.lang3.math.NumberUtils;
 //必要なインポート
 import org.springframework.security.crypto.password.PasswordEncoder; // パスワードを安全にハッシュ化するためのクラス
 import org.springframework.stereotype.Service; // サービスクラスとしてスプリングに認識させるためのアノテーション
@@ -11,6 +12,7 @@ import com.example.nagoyameshi.form.SignupForm; // 新規登録フォームの�
 import com.example.nagoyameshi.form.UserEditForm; // ユーザー編集フォームのデータを扱うクラス
 import com.example.nagoyameshi.repository.RoleRepository; // ロール情報を操作するリポジトリ
 import com.example.nagoyameshi.repository.UserRepository; // ユーザー情報を操作するリポジトリ
+import com.stripe.model.checkout.Session;
 
 /**
 * ユーザーに関するビジネスロジックを担当するサービスクラス。
@@ -131,5 +133,22 @@ public class UserService {
 		User currentUser = userRepository.getReferenceById(userEditForm.getId());
 		// 現在のメールアドレスと新しいメールアドレスを比較
 		return !userEditForm.getEmail().equals(currentUser.getEmail());
+	}
+
+	/**
+	 * 有料会員登録にアップグレードする
+	 * @param userId
+	 */
+	public void upgradeSubscribeAccount(Session session) {
+		var userId = session.getMetadata().get("userId");
+		// ユーザーIDで既存のユーザーを取得
+		User user = userRepository.getReferenceById(NumberUtils.toInt(userId));
+		// 会員ユーザー（ROLE_MEMBER）ロールを取得
+		Role role = roleRepository.findByName("ROLE_MEMBER");
+		user.setRole(role);
+		// サブスクリプションIDを設定
+		user.setSubscriptionId(session.getSubscription());
+		// データベースに保存
+		userRepository.save(user);
 	}
 }

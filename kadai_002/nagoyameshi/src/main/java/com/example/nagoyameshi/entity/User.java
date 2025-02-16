@@ -84,6 +84,12 @@ public class User {
     private String password;
 
     /**
+     * サブスクリプションID
+     */
+    @Column(name="subscription_id")
+    private String subscriptionId;
+
+    /**
      * 役割（ロール）
      * データベースの "role_id" 列に対応。
      * Roleエンティティとの多対一のリレーション。

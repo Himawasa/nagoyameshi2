@@ -1,11 +1,11 @@
 -- お気に入りテーブル
 CREATE TABLE IF NOT EXISTS favorites (
-  id int auto_increment NOT NULL
-  , shop_id int NOT NULL
-  , user_id int NOT NULL
-  , created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL
-  , updated_at datetime on update CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
-  , CONSTRAINT favorites_PKC PRIMARY KEY (id)
+    id INT AUTO_INCREMENT NOT NULL,
+    shop_id INT NOT NULL,
+    user_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    CONSTRAINT favorites_PKC PRIMARY KEY (id)
 );
 
 -- 役割（ロール）テーブル
@@ -32,9 +32,9 @@ CREATE TABLE IF NOT EXISTS users (
     phone_number VARCHAR(50) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    subscription_id VARCHAR(255),
     role_id INT NOT NULL, 
     enabled BOOLEAN NOT NULL,
-    is_premium BOOLEAN NOT NULL DEFAULT FALSE, -- 有料会員フラグ
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -85,22 +85,12 @@ CREATE TABLE IF NOT EXISTS reviews (
     FOREIGN KEY (shop_id) REFERENCES shops(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- クレジットカード情報（有料会員向け）
-CREATE TABLE IF NOT EXISTS payment_methods (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    card_number VARCHAR(16) NOT NULL, -- カード番号（セキュリティのため暗号化が必要）
-    expiry_date VARCHAR(5) NOT NULL, -- MM/YY 形式
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- verification_tokens
+-- 認証トークン管理テーブル（verification_tokens）
 CREATE TABLE IF NOT EXISTS verification_tokens (
-  id int auto_increment NOT NULL
-  , user_id int NOT NULL
-  , token varchar(255) NOT NULL
-  , created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL
-  , updated_at datetime on update CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
-  , CONSTRAINT verification_tokens_PKC PRIMARY KEY (id)
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT NOT NULL,
+    token VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    CONSTRAINT verification_tokens_PKC PRIMARY KEY (id)
 );

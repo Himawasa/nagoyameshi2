@@ -3,6 +3,10 @@ package com.example.nagoyameshi.util;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.example.nagoyameshi.security.UserDetailsImpl;
+
 /**
  * Nagoyameshiプロジェクトで汎用的に使用する雑多なクラス
  */
@@ -40,5 +44,26 @@ public class NagoyameshiUtils {
 			throw new IllegalArgumentException("dateTime must not be null");
 		}
 		return dateTime.isAfter(LocalDateTime.now());
+	}
+
+	/**
+	 * spring-security認証情報principalからuserIdを取得する
+	 * @return
+	 */
+	public static Integer getCurrentUserId() {
+		return getLoginUserDetail() != null ? getLoginUserDetail().getUser().getId() : null;
+	}
+
+	/**
+	 * ログイン中のユーザ-を取得する
+	 * @return
+	 */
+	public static UserDetailsImpl getLoginUserDetail() {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		if (principal instanceof UserDetailsImpl user) {
+			return user; // userIdを返す
+		}
+		return null;
 	}
 }

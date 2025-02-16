@@ -29,7 +29,7 @@
 							</nav>
 
 							<!-- お気に入り機能 ここから -->
-							<div sec:authorize="isAuthenticated()">
+							<div sec:authorize="hasRole('ROLE_MEMBER')">
 								<div th:if="${favoriteFlag}">
 									<a href="#"
 										onclick="event.preventDefault(); document.getElementById('favorite-form').submit();">&#9829;
@@ -117,7 +117,17 @@
 										</div>
 									</div>
 								</div>
-								<div sec:authorize="isAuthenticated()" class="col-lg-4 px-0 ps-lg-4 mb-4">
+								<div sec:authorize="hasRole('ROLE_GENERAL')" class="col-lg-4 px-0 ps-lg-4 mb-4">
+									<div class="card">
+										<div class="card-body">
+											<p class="card-text">予約するには<a th:href="@{/user}">定期講読</a>が必要です。</p>
+											<button type="submit" class="btn text-white shadow-sm w-100 nagoyameshi-btn"
+												disabled>予約する</button>
+										</div>
+									</div>
+								</div>
+								<div sec:authorize="hasRole('ROLE_MEMBER') || hasRole('ROLE_ADMIN')"
+									class="col-lg-4 px-0 ps-lg-4 mb-4">
 									<div class="card">
 										<div class="card-body">
 											<form method="get"
@@ -155,7 +165,7 @@
 							<h2 class="mb-4 text-center">レビュー</h2>
 							<div class="row justify-content-center mb-4 text-center" sec:authorize="isAuthenticated()"
 								th:unless="${reviewFlag}">
-								<div class="col-lg-4">
+								<div class="col-lg-4" 　sec:authorize="hasRole('ROLE_MEMBER')">
 									<a th:href="@{/shops/{shopId}/reviews/register(shopId=${shop.id})}"
 										class="btn btn-primary">レビューを投稿する</a>
 								</div>
