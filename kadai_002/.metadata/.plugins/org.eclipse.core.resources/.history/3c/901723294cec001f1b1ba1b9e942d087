@@ -1,0 +1,22 @@
+#spring.application.name=nagoyameshi
+
+spring.datasource.url=jdbc:mysql://${MYSQL_HOST:localhost}:3306/nagoyameshi_db
+ spring.datasource.username=root
+ spring.datasource.password=Himawasa3007#
+ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+ spring.sql.init.encoding=utf-8
+ spring.sql.init.mode=always
+ 
+ spring.servlet.multipart.max-file-size=5MB
+ 
+ 
+spring.mail.host=sandbox.smtp.mailtrap.io
+spring.mail.port=587
+spring.mail.username=51bb547cbbaafb
+spring.mail.password=235e7ed3a26116
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+
+stripe.api-key=sk_test_51QiVh6JZFX4kVigWwQb2sDVERNkD7VP7ePKmEAuqjcKfujYq9kov8pTuXDAGL4BnrKMjkHUPf19V8iNJN7wz7K2X00zbU2EdMp
+stripe.webhook-secret=whsec_7b288e6ed818e24ae059daebfb787421a2fad49faadc7966d2457e5909a0ef94
+stripe.subscribe.price-id=price_1Qt0oxJZFX4kVigW0qIfssCG
