@@ -178,6 +178,7 @@ public class StripeService {
 		resource.cancel(params);
 
 		user.setSubscriptionId(null);
+		user.setCustomerId(null);
 		user.setRole(roleRepository.findByName("ROLE_GENERAL"));
 
 		userRepository.save(user);
