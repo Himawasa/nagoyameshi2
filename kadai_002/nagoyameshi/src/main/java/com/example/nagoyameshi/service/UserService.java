@@ -146,8 +146,9 @@ public class UserService {
 		// 会員ユーザー（ROLE_MEMBER）ロールを取得
 		Role role = roleRepository.findByName("ROLE_MEMBER");
 		user.setRole(role);
-		// サブスクリプションIDを設定
+		// サブスクリプションID/顧客IDを設定
 		user.setSubscriptionId(session.getSubscription());
+		user.setCustomerId(session.getCustomer());
 		// データベースに保存
 		userRepository.save(user);
 	}

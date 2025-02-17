@@ -16,12 +16,19 @@ public class ReservationInputForm {
 
 	/**
 	 * 来店日
-	 * フォーマット: "yyyy-MM-dd hh:mm"
+	 * フォーマット: "yyyy-MM-dd"
 	 * - フォームでは1つの入力項目で指定される。
 	 * - 空白やnullは許容されない。
 	 */
-	@NotBlank(message = "来店日時を選択してください。")
+	@NotBlank(message = "来店日を選択してください。")
 	private String commingDate;
+
+	/**
+	 * 来店日時
+	 * フォーマット: "hh-mm"
+	 */
+	@NotBlank(message = "来店日時を選択してください。")
+	private String commingTime;
 
 	/**
 	 * 人数
@@ -31,4 +38,8 @@ public class ReservationInputForm {
 	@Min(value = 1, message = "来店人数は1人以上に設定してください。") // 最小値を1に設定
 	private Integer numberOfPeople;
 
+	/**
+	 * 定休日
+	 */
+	private String regularHoliday;
 }

@@ -143,4 +143,17 @@ public class UserController {
 		stripeService.unSubscribe(id);
 		return "redirect:/?unSubscribe";
 	}
+
+	/**
+	 * クレジットカード情報を変更するサポートURLを返却する
+	 * @param id
+	 * @return url
+	 * @throws StripeException
+	 */
+	@PostMapping("/{userId}/update/creditCard")
+	@ResponseBody
+	public String updateCreditCard(@PathVariable("userId") Integer id, HttpServletRequest httpRequest)
+			throws StripeException {
+		return stripeService.createCustomerSupportSession(id, httpRequest);
+	}
 }

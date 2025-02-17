@@ -1,5 +1,8 @@
 package com.example.nagoyameshi.controller;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -117,7 +120,32 @@ public class ShopController {
 		// 店舗情報をモデルに追加
 		model.addAttribute("shop", shop);
 		model.addAttribute("categoryName", categoryService.getCategoryName(shop.getCategoryId()));
-		model.addAttribute("reservationInputForm", new ReservationInputForm());
+		if (model.getAttribute("reservationInputForm") == null) {
+			model.addAttribute("reservationInputForm", new ReservationInputForm());
+		}
+		model.addAttribute("timeSlots", createTimeSlot(shop.getBusinessHours()));
 		return "shops/show";
+	}
+
+	/**
+	 * 開店から閉店時間の刻みで予約時間をListに返却する(閉店時間を含めない)
+	 * @param openClose
+	 * @return
+	 */
+	private List<String> createTimeSlot(String openClose) {
+
+		String[] spOpenClose = openClose.split("-");
+		if (spOpenClose.length != 2) {
+			return List.of();
+		}
+
+		LocalTime start = LocalTime.parse(spOpenClose[0], DateTimeFormatter.ofPattern("HH:mm"));
+		LocalTime end = LocalTime.parse(spOpenClose[1], DateTimeFormatter.ofPattern("HH:mm"));
+
+		List<String> timeSlots = new ArrayList<>();
+		for (LocalTime time = start; !time.equals(end); time = time.plusHours(1)) {
+			timeSlots.add(time.format(DateTimeFormatter.ofPattern("HH:mm")));
+		}
+		return timeSlots;
 	}
 }

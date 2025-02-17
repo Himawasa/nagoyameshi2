@@ -1,6 +1,8 @@
 package com.example.nagoyameshi.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 
 import jakarta.servlet.http.HttpServletRequest; // HTTPリクエスト情報
 
@@ -22,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes; // リダ
 import com.example.nagoyameshi.entity.Reservation;
 import com.example.nagoyameshi.entity.Shop;
 import com.example.nagoyameshi.entity.User;
+import com.example.nagoyameshi.enums.DayOfWeekEnum;
 import com.example.nagoyameshi.form.ReservationInputForm;
 import com.example.nagoyameshi.form.ReservationRegisterForm;
 import com.example.nagoyameshi.repository.ReservationRepository;
@@ -70,6 +73,47 @@ public class ReservationController {
 			Model model) {
 		// 確認画面にリダイレクト
 		redirectAttributes.addFlashAttribute("reservationInputForm", reservationInputForm);
+
+		// 来店日をチェック
+		if (!reservationInputForm.getCommingDate().isEmpty()) {
+			LocalDate commingDate = null;
+			try {
+				commingDate = LocalDate.parse(reservationInputForm.getCommingDate(),
+						NagoyameshiUtils.COMMING_DATE_FORMATTER);
+			} catch (DateTimeParseException e) {
+				bindingResult.rejectValue("commingDate", "error_commingDate", "不正な日付形式です。'YYYY-MM-DD'形式で入力してください。");
+			}
+			// 定休日のバリデーション
+			if (commingDate != null && commingDate.getDayOfWeek().getValue() == DayOfWeekEnum
+					.fromDisplayName(reservationInputForm.getRegularHoliday())) {
+				bindingResult.rejectValue("commingDate", "error_commingDate", "選択された来店日は定休日です。");
+			}
+		}
+
+		// 来店日時をチェック
+		if (!reservationInputForm.getCommingDate().isEmpty() && !reservationInputForm.getCommingTime().isEmpty()) {
+			LocalDateTime now = LocalDateTime.now();
+			LocalDateTime commingDateTime = null;
+
+			try {
+				commingDateTime = LocalDateTime.parse(
+						reservationInputForm.getCommingDate() + ' ' + reservationInputForm.getCommingTime(),
+						NagoyameshiUtils.COMMING_DATE_TIME_FORMATTER);
+			} catch (DateTimeParseException e) {
+				bindingResult.rejectValue("commingTime", "error_commingTime",
+						"不正な日時形式です。'YYYY-MM-DD HH:mm'形式で入力してください。");
+			}
+			// 来店時間のバリデーション
+			if (commingDateTime != null && now.isAfter(commingDateTime)) {
+				bindingResult.rejectValue("commingTime", "error_commingTime", "来店時間が過ぎています。");
+			}
+		}
+
+		if (bindingResult.hasErrors()) {
+			bindingResult.getFieldErrors().forEach(error -> redirectAttributes
+					.addFlashAttribute("error_" + error.getField(), error.getDefaultMessage()));
+			return "redirect:/shops/{id}";
+		}
 		return "redirect:/shops/{id}/reservations/confirm";
 	}
 
@@ -86,7 +130,8 @@ public class ReservationController {
 		User user = userDetailsImpl.getUser(); // 認証済みユーザーを取得
 
 		// 来店日時を取得
-		LocalDateTime reservationDate = LocalDateTime.parse(reservationInputForm.getCommingDate(),
+		LocalDateTime reservationDate = LocalDateTime.parse(
+				reservationInputForm.getCommingDate() + ' ' + reservationInputForm.getCommingTime(),
 				NagoyameshiUtils.COMMING_DATE_TIME_FORMATTER);
 
 		// 宿泊料金を計算
@@ -132,7 +177,7 @@ public class ReservationController {
 		}
 		// DBから予約を削除する
 		reservationRepository.deleteById(id);
-		
+
 		return "redirect:/reservations?cancel";
 	}
 }

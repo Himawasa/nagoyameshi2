@@ -156,18 +156,34 @@
 													本当に定期購読を解約しますか？
 												</div>
 												<div class="modal-footer">
-													<form id="unSubscribeForm" th:action="@{/user/{userId}/unSubscribe(userId=${user.getId()})}" method="post">
-													<button type="button" class="btn btn-secondary"
-														data-bs-dismiss="modal">キャンセル</button>
-													<input type="hidden" name="userId" th:value="${user.getId()}" />
-													<button type="submit" class="btn btn-danger"
-														id="unSubscribe">解約する</button>
+													<form id="unSubscribeForm"
+														th:action="@{/user/{userId}/unSubscribe(userId=${user.getId()})}"
+														method="post">
+														<button type="button" class="btn btn-secondary"
+															data-bs-dismiss="modal">キャンセル</button>
+														<button type="submit" class="btn btn-danger"
+															id="unSubscribe">解約する</button>
 													</form>
 												</div>
 											</div>
 										</div>
 									</div>
 									<span sec:authorize=" hasRole('ROLE_ADMIN')">管理者</span>
+								</div>
+							</div>
+
+							<div class="row pb-2 mb-2 border-bottom" sec:authorize=" hasRole('ROLE_MEMBER')">
+								<div class="col-4">
+									<span class="fw-bold">カード情報</span>
+								</div>
+
+								<div class="col">
+									<form id="updateCreditForm"
+										th:action="@{/user/{userId}/update/creditCard(userId=${user.getId()})}"
+										method="post">
+										<button type="button" id="updateCard" sec:authorize="hasRole('ROLE_MEMBER')"
+											class="btn btn-sm btn-warning">変更</button>
+									</form>
 								</div>
 							</div>
 						</div>
@@ -191,7 +207,6 @@
 		$('#subscribe').click(function (event) {
 			event.preventDefault(); // フォームのデフォルトのサブミットを防ぐ
 			const csrfToken = document.querySelector('input[name="_csrf"]').value;
-			var userId = $('input[name="userId"]').val(); // userIdを取得
 			var form = $('#subscribeForm')[0]
 			$.ajax({
 				//url: '/user/' + userId + '/subscribe', // URLを指定
@@ -210,6 +225,29 @@
 					// エラーが発生した場合の処理
 					console.error('エラー:', error);
 					alert('有料会員登録に失敗しました。');
+				}
+			});
+		});
+
+		$('#updateCard').click(function (e) {
+			event.preventDefault(); // フォームのデフォルトのサブミットを防ぐ
+			const csrfToken = document.querySelector('input[name="_csrf"]').value;
+			var form = $('#updateCreditForm')[0];
+			$.ajax({
+				//url: '/user/' + userId + '/subscribe', // URLを指定
+				url: form.action, // URLを指定
+				type: 'POST', // リクエストの種類
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRF-TOKEN': csrfToken // CSRFトークンをヘッダーに追加
+				},
+				success: function (response) {
+					location.href = response;
+				},
+				error: function (xhr, status, error) {
+					// エラーが発生した場合の処理
+					console.error('エラー:', error);
+					alert('CARD情報変更に失敗しました。');
 				}
 			});
 		});

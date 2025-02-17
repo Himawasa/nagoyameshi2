@@ -8,6 +8,4 @@ flatpickr('#commingDate', {
     locale: 'ja',
     minDate: minDate, // 3時間後をminDateに設定
     maxDate: maxDate, // 3ヶ月後をmaxDateに設定
-    enableTime: true,
-    dateFormat: "Y-m-d H:i"
 });

@@ -12,6 +12,11 @@ import com.example.nagoyameshi.security.UserDetailsImpl;
  */
 public class NagoyameshiUtils {
 
+	// 来店日のフォーマット
+	public static final String COMMING_DATE_FORMAT = "yyyy-MM-dd";
+	// 来店日のフォーマッター
+	public static final DateTimeFormatter COMMING_DATE_FORMATTER = DateTimeFormatter
+			.ofPattern(COMMING_DATE_FORMAT);
 	// 来店日時のフォーマット
 	public static final String COMMING_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
 	// 来店日時のフォーマッター
